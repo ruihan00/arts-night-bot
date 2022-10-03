@@ -34,7 +34,7 @@ def genCheckMarkup(story, user):
     markup.add(InlineKeyboardButton('No', callback_data="submitStoryAgain"))
     return markup
 def appendRowToSheet(story, user):
-    sheet = client.open('Arts Night').sheet1
+    sheet = client.open('Arts Night Idea Dump').sheet1
     content = sheet.get_all_records()
     nextIndex = len(content) + 2
     newRow = [story, user]
