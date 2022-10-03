@@ -57,7 +57,7 @@ def submitIdea(call):
                                                "\nTo submit a idea..."
                                                "\n1. Click on 'Submit Idea'"
                                                "\n2. Enter your idea and press send"
-                                               "\n3. Click Yes to confirm/No to edit the Idea"
+                                               "\n3. Click 'Yes' to confirm/'No' to edit the Idea"
                                                "\n4. The idea will be added upon confirmation ")
     elif call.data == "submitIdeaAgain":
         bot.send_message(call.message.chat.id, "Ok try again. Whats your idea?")
