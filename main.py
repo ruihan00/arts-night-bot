@@ -24,20 +24,21 @@ def genStartMarkup() :
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
     markup.one_time_keyboard = True
-    markup.add(InlineKeyboardButton("Submit Story",callback_data="submitStory"))
+    markup.add(InlineKeyboardButton("Submit Idea",callback_data="submitIdea"))
+    markup.add(InlineKeyboardButton("Help", callback_data="help"))
     return markup
-def genCheckMarkup(story, user):
+def genCheckMarkup(idea, user):
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
     markup.one_time_keyboard = True
-    markup.add(InlineKeyboardButton('Yes', callback_data=json.dumps({"story": story, "user": user})))
-    markup.add(InlineKeyboardButton('No', callback_data="submitStoryAgain"))
+    markup.add(InlineKeyboardButton('Yes', callback_data=json.dumps({"idea": idea, "user": user})))
+    markup.add(InlineKeyboardButton('No', callback_data="submitIdeaAgain"))
     return markup
-def appendRowToSheet(story, user):
+def appendRowToSheet(idea, user):
     sheet = client.open('Arts Night Idea Dump').sheet1
     content = sheet.get_all_records()
     nextIndex = len(content) + 2
-    newRow = [story, user]
+    newRow = [idea, user]
     sheet.insert_row(newRow, nextIndex)
 
 @bot.message_handler(commands=['start'])
@@ -45,24 +46,31 @@ def start(message):
     bot.send_message(message.chat.id, "What do you want to do !", reply_markup=genStartMarkup())
 
 @bot.callback_query_handler(func=lambda call: True)
-def submitStory(call):
-    if call.data == "submitStory":
+def submitIdea(call):
+    if call.data == "submitIdea":
         print(call)
         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
-        bot.send_message(call.message.chat.id, "Whats your story")
+        bot.send_message(call.message.chat.id, "Whats your idea?")
         bot.register_next_step_handler_by_chat_id(call.message.chat.id, handle_question)
-    elif call.data == "submitStoryAgain":
-        bot.send_message(call.message.chat.id, "Ok try again. Whats your story?")
+    elif call.data == "help":
+        bot.send_message(call.message.chat.id, "Hello welcome to Arts Night '23 Idea dump!"
+                                               "\nTo submit a idea..."
+                                               "\n1. Click on 'Submit Idea'"
+                                               "\n2. Enter your idea and press send"
+                                               "\n3. Click Yes to confirm/No to edit the Idea"
+                                               "\n4. The idea will be added upon confirmation ")
+    elif call.data == "submitIdeaAgain":
+        bot.send_message(call.message.chat.id, "Ok try again. Whats your idea?")
         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
         bot.register_next_step_handler_by_chat_id(call.message.chat.id, handle_question)
     else :
         data = json.loads(call.data)
         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
-        story = data['story']
+        idea = data['idea']
         user = data['user']
-        bot.send_message(call.message.chat.id, "Ok adding story")
-        appendRowToSheet(story, user)
-        bot.send_message(call.message.chat.id, "Ok story added successfully")
+        bot.send_message(call.message.chat.id, "Ok adding idea")
+        appendRowToSheet(idea, user)
+        bot.send_message(call.message.chat.id, "Ok idea added successfully")
 
 
 def handle_question(msg):
@@ -71,7 +79,7 @@ def handle_question(msg):
     input = msg.json['text']
 
     message = f"""
-    The following story will be added:\n\n{input} \n\nDo you confirm ?
+    The following idea will be added:\n\n{input} \n\nDo you confirm ?
     """
     bot.send_message(msg.chat.id, message, reply_markup=genCheckMarkup(input, user))
 
