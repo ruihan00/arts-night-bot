@@ -8,7 +8,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import pprint
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-token = "5750019327:AAE4IbP-65njWFoq09Llr0DxSJSRhBsUOmY"
+token = os.environ("token")
 
 bot = telebot.TeleBot(token)
 server = Flask(__name__)
